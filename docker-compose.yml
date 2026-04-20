@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pumpky
+      POSTGRES_PASSWORD: pumpky
+      POSTGRES_DB: pumpky
+    ports:
+      - "5432:5432"
+    volumes:
+      - pumpky_pg:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://pumpky:pumpky@db:5432/pumpky
+      USE_LIVE_DATA: "false"
+      DEMO_MODE: "true"
+
+volumes:
+  pumpky_pg:
